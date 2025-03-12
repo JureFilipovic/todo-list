@@ -50,8 +50,8 @@ export default function createProject(title) {
     }
 
     // Deletes task based on ID, returns true if successful and false if not
-    const deleteTask = (taskId) => {
-        const index = _tasks.findIndex(t => t.getId() === taskId);
+    const deleteTask = (task) => {
+        const index = _tasks.findIndex(t => t.getId() === task.getId());
         if (index != -1) {
             _tasks.splice(index, 1);
             return true; // Successfully deleted
