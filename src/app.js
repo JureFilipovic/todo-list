@@ -15,6 +15,10 @@ const appController = (function () {
         }
     }
 
+    function getActiveProject () {
+        return _activeProject;
+    }
+
     function addProject(title) {
         if (_projects.some(p => p.getTitle() === title)) return false;
 
@@ -25,13 +29,13 @@ const appController = (function () {
     }
 
     function removeProject(title) {
-        _projects = _projects.filter(p => p.getTItle() !== title);
+        _projects = _projects.filter(p => p.getTitle() !== title);
 
         //save projects to memory
     }
 
     function setActiveProject(title) {
-        _activeProject = _projects.find(p => p.getTItle() === title);
+        _activeProject = _projects.find(p => p.getTitle() === title);
     }
 
     function checkActiveProject() {
@@ -55,19 +59,46 @@ const appController = (function () {
 
     function removeTaskFromProject(task) {
         if (checkActiveProject()) {
+            console.log("removing task id:", task.getId());
             return _activeProject.deleteTask(task);
         }
 
         return false;
     }
 
+    function getProjects() {
+        return _projects;
+    }
+
+    function logAllTasks() {
+        _projects.forEach(project => {
+            console.log(`Project: ${project.getTitle()}`);
+            if (project.getTasks().length === 0) console.log("  Empty Project")
+            project.getTasks().forEach(task => {
+                console.log(`   Task ID: ${task.getId()}`);
+                console.log(`   Title: ${task.getTitle()}`);
+                console.log(`   Description: ${task.getDescription()}`);
+                console.log(`   Due Date: ${task.getDueDate()}`);
+                console.log(`   Notes: ${task.getNotes()}`);
+                console.log(`   Priority: ${task.getPriority()}`);
+                console.log(`   Completed: ${task.isCompleted()}`);
+                console.log('-------------------------------');
+            });
+        });
+    }
+
     return {
         init,
+        getActiveProject,
         addProject,
         removeProject,
         setActiveProject,
         checkActiveProject,
         addTaskToProject,
         removeTaskFromProject,
+        getProjects,
+        logAllTasks,
     }
 })();
+
+export default appController;

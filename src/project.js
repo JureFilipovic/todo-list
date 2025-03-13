@@ -13,6 +13,9 @@ export default function createProject(title) {
     // Getter methods
     const getTasks = () => _tasks;
     const getTitle = () => _title;
+    const getTask = (taskId) => {
+        return _tasks.find(task => task.getId() === taskId) || null;
+    };
     
     // Setter methods
     const setTitle = (newTitle) => { _title = newTitle; };
@@ -28,8 +31,8 @@ export default function createProject(title) {
     }
 
     // Updates task property, returns true if successful and false if not
-    const updateTask = (task, property, newValue) => {
-        const task = _tasks.find(t => t.getId() === task.getId());
+    const updateTask = (taskToUpdate, property, newValue) => {
+        const task = _tasks.find(t => t.getId() === taskToUpdate.getId());
         if (!task) return false; // Task doesn't exist
 
         const propertySetters = {
@@ -51,17 +54,21 @@ export default function createProject(title) {
 
     // Deletes task based on ID, returns true if successful and false if not
     const deleteTask = (task) => {
+        console.log("deleting task id:", task.getId());
         const index = _tasks.findIndex(t => t.getId() === task.getId());
         if (index != -1) {
             _tasks.splice(index, 1);
+            console.log("removed task")
             return true; // Successfully deleted
         }
+        console.log("didn't remove")
         return false; // Task not found
     }
 
     return {
         getTasks,
         getTitle,
+        getTask,
         setTitle,
         addTask,
         updateTask,
