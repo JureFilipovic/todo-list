@@ -28,8 +28,8 @@ export default function createProject(title) {
     }
 
     // Updates task property, returns true if successful and false if not
-    const updateTask = (taskId, property, newValue) => {
-        const task = _tasks.find(t => t.getId() === taskId);
+    const updateTask = (task, property, newValue) => {
+        const task = _tasks.find(t => t.getId() === task.getId());
         if (!task) return false; // Task doesn't exist
 
         const propertySetters = {
