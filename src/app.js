@@ -29,8 +29,17 @@ const appController = (function () {
     }
 
     function removeProject(title) {
-        _projects = _projects.filter(p => p.getTitle() !== title);
+        const projectToRemove = _projects.find(p => p.getTitle() === title);
 
+        if (projectToRemove) {
+            const tasksToDelete = projectToRemove.getTasks();
+
+            tasksToDelete.forEach(task => {
+                projectToRemove.deleteTask(task);
+            });
+
+            _projects = _projects.filter(p => p.getTitle() !== title);
+        }
         //save projects to memory
     }
 
