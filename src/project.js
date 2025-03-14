@@ -9,6 +9,7 @@ import createTask from "./task.js";
 export default function createProject(title) {
     let _tasks = [];
     let _title = title;
+    let _activeTask = null;
 
     // Getter methods
     const getTasks = () => _tasks;
@@ -16,9 +17,11 @@ export default function createProject(title) {
     const getTask = (taskId) => {
         return _tasks.find(task => task.getId() === taskId) || null;
     };
+    const getActiveTask = () => _activeTask;
     
     // Setter methods
     const setTitle = (newTitle) => { _title = newTitle; };
+    const setActiveTask = (task) => _activeTask = task;
 
     // Adds a task to the _tasks array, returns true if successful and false if not
     const addTask = (task) => {
@@ -69,7 +72,9 @@ export default function createProject(title) {
         getTasks,
         getTitle,
         getTask,
+        getActiveTask,
         setTitle,
+        setActiveTask,
         addTask,
         updateTask,
         deleteTask,
