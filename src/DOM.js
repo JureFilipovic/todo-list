@@ -17,6 +17,13 @@ const DOMController = (() => {
     const taskList = document.createElement("ul");
     taskList.id = "task-list";
 
+    const createProjectButton = document.createElement("button");
+    sideBar.appendChild(createProjectButton);
+
+    createProjectButton.addEventListener("click", () => {
+        
+    })
+
     content.appendChild(sideBar);
     content.appendChild(mainArea);
     sideBar.appendChild(projectList);
