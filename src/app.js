@@ -16,6 +16,7 @@ const appController = (function () {
     }
 
     function getActiveProject () {
+        console.log ("active project: ", _activeProject.getTitle());
         return _activeProject;
     }
 

@@ -15,6 +15,7 @@ export default function createProject(title) {
     const getTasks = () => _tasks;
     const getTitle = () => _title;
     const getTask = (taskId) => {
+        console.log("get this task id: ", taskId);
         return _tasks.find(task => task.getId() === taskId) || null;
     };
     const getActiveTask = () => _activeTask;
@@ -34,25 +35,16 @@ export default function createProject(title) {
     }
 
     // Updates task property, returns true if successful and false if not
-    const updateTask = (taskToUpdate, property, newValue) => {
+    const updateTask = (taskToUpdate, title, description, dueDate, notes, priority) => {
         const task = _tasks.find(t => t.getId() === taskToUpdate.getId());
         if (!task) return false; // Task doesn't exist
 
-        const propertySetters = {
-            "title": task.setTitle,
-            "description": task.setDescription,
-            "dueDate": task.setDueDate,
-            "notes": task.setNotes,
-            "priority": task.setPriority,
-            "completed": task.toggleCompleted,
-        };
-
-        if (propertySetters[property]) {
-            propertySetters[property](newValue);
-            return true; // Task property set successfully
-        } else {
-            return false; // Task property doesn't exist
-        }
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setDueDate(dueDate);
+        task.setNotes(notes);
+        task.setPriority(priority);
+        return true;
     }
 
     // Deletes task based on ID, returns true if successful and false if not
