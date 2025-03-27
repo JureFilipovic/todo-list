@@ -1,104 +1,116 @@
 import appController from "./app";
-import createProject from "./project";
-import createTask from "./task";
+import modalUI from "./modalUI";
+import projectUI from "./projectUI";
+import taskUI from "./taskUI";
 
+/**
+ * The DOMController module manages the user interface and event listeners for 
+ * interacting with projects and tasks. It handles rendering project/task lists,
+ * attaching event listeners to buttons and task/project items, and manages 
+ * interactions like opening modals, setting active projects, and toggling task details.
+ * 
+ * The main function to initialize this module is `init`, which calls various 
+ * functions to set up the UI and events.
+ */
 const DOMController = (() => {
-    const content = document.getElementById("content");
 
-    const sideBar = document.createElement("div");
-    sideBar.id = "side-bar";
+    /**
+     * Initializes the DOMController by rendering the project list and task list, 
+     * and attaching event listeners for creating, editing, and deleting projects/tasks.
+     */
+    function init() {
+        projectUI.renderProjectList();
+        taskUI.renderTaskList();
+        attachProjectEventListeners();
+        attachCreateProjectButtonListener();
+        attachTaskEventListeners();
+    }
 
-    const mainArea = document.createElement("div");
-    mainArea.id = "main-area";
+    /**
+     * Attaches event listeners to the project list for actions like selecting 
+     * and deleting projects.
+     */
+    function attachProjectEventListeners() {
+        const projectList = document.getElementById("project-list");
 
-    const projectList = document.createElement("ul");
-    projectList.id = "project-list";
+        projectList.addEventListener("click", (e) => {
+            const projectItem = e.target.closest(".project-item");
+            if (!projectItem) {
+                console.log("no project item")
+                return;
+            }
+            const projectTitle = projectItem.dataset.projectTitle;
+            console.log(`active project: ${projectTitle}`)
 
-    const taskList = document.createElement("ul");
-    taskList.id = "task-list";
+            if (e.target.classList.contains("delete-project-btn")) {
+                e.stopPropagation();
+                appController.removeProject(projectTitle);
+                projectUI.renderProjectList();
+                attachProjectEventListeners();
+            } else {
+                appController.setActiveProject(projectTitle);
+                taskUI.renderTaskList();
+            }
+        });
+    }
 
-    const createProjectButton = document.createElement("button");
-    sideBar.appendChild(createProjectButton);
 
-    createProjectButton.addEventListener("click", () => {
-        
-    })
+    /**
+     * Attaches an event listener to the 'Create Project' button to show the project 
+     * creation modal.
+     */
+    function attachCreateProjectButtonListener() {
+        const createProjectButton = document.getElementById("create-project-btn");
+        createProjectButton.addEventListener("click", () => {
+            modalUI.showProjectModal();
+            projectUI.renderProjectList();
+            attachProjectEventListeners();
+        });
+    }
 
-    content.appendChild(sideBar);
-    content.appendChild(mainArea);
-    sideBar.appendChild(projectList);
-    mainArea.appendChild(taskList);
+    /**
+     * Attaches event listeners to the task list for actions like creating, 
+     * selecting, and deleting tasks.
+     */
+    function attachTaskEventListeners() {
+        console.log("Attaching task event listeners..")
+        const taskList = document.getElementById("task-list");
 
-    function renderProjectList() {
-        const projects = appController.getProjects();
-
-        projects.forEach((project) => {
-            const projectItem = document.createElement("li");
-            projectItem.classList.add("project-item");
-
-            const projectTitle = document.createElement("span");
-            projectTitle.textContent = project.getTitle();
-
-            const taskCount = document.createElement("span");
-            taskCount.textContent = `(${project.getTasks().length} tasks)`;
-
-            if (appController.getActiveProject() === project) {
-                projectItem.classList.add("active");
+        taskList.addEventListener("click", (e) => {
+            console.log("clicked element: ", e.target);
+            const taskItem = e.target.closest(".task-item");
+            
+            if (e.target.id === "create-task-btn") {
+                e.stopPropagation();
+                modalUI.showTaskModal();
+                return;
             }
 
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.addEventListener("click", () => {
-                appController.removeProject(project.getTitle());
-                renderProjectList();
-            });
+            if (!taskItem) return;
 
-            projectItem.addEventListener("click", (e) => {
-                appController.setActiveProject(project.getTitle());
-                renderTaskList();
-            })
+            const taskTitle = taskItem.querySelector("span").textContent;
+            const task = appController.getActiveProject().getTasks().find(task => task.getTitle() === taskTitle);
 
-            projectItem.appendChild(projectTitle);
-            projectItem.appendChild(taskCount);
-            projectItem.appendChild(deleteButton);
-
-            projectList.appendChild(projectItem);
-        });
-    }
-
-    function renderTaskList() {
-        const activeProject = appController.getActiveProject();
-        let tasks = [];
-
-        if (activeProject) {
-            tasks = activeProject.getTasks();
-        } else {
-            console.log ("No active project");
-        }
-
-        taskList.innerHTML = "";
-
-        tasks.forEach((task) => {
-            renderTaskItem(task);
+            if (e.target.classList.contains("delete-task-btn")) {
+                e.stopPropagation();
+                appController.removeTaskFromProject(task);
+                taskUI.renderTaskList();
+                attachTaskEventListeners();
+                attachCreateTaskButtonListener();
+            } else {
+                toggleTaskDetails(task, taskItem);
+            }
         })
     }
-    
-    function renderTaskItem(task) {
-        const taskItem = document.createElement("li");
-        taskItem.classList.add("task-item");
-        taskItem.classList.add(task.getPriority());
 
-        const taskTitle = document.createElement("span");
-        taskTitle.textContent = task.getTitle();
-        taskItem.appendChild(taskTitle);
-
-        taskItem.addEventListener("click", () => {
-            toggleTaskDetails(task, taskItem);
-        });
-
-        taskList.appendChild(taskItem);
-    }
-
+    /**
+     * Toggles the visibility of additional task details when a task is selected.
+     * It displays task details (description, due date, notes, and priority) when 
+     * expanded, and hides them when collapsed.
+     * 
+     * @param {object} task - The task object whose details are being toggled.
+     * @param {HTMLElement} taskItem - The DOM element representing the task item.
+     */
     function toggleTaskDetails(task, taskItem) {
         const activeTask = appController.getActiveProject().getActiveTask();
 
@@ -120,13 +132,14 @@ const DOMController = (() => {
             taskDetails.innerHTML = `
                 <p>Description: ${task.getDescription() || "No description"}</p>
                 <p>Due Date: ${task.getDueDate() || "No Due Date"}</p>
-                <p>Notes: ${task.getNotes() || "No notes"}</p>`
+                <p>Notes: ${task.getNotes() || "No notes"}</p>
+                <p>Priority: ${task.getPriority()}</p>`
 
             const editButton = document.createElement("button");
             editButton.textContent = "Edit";
             editButton.addEventListener("click", (e) => {
                 e.stopPropagation();
-                // editTask(task);
+                modalUI.showTaskModal(task);
             });
 
             taskItem.appendChild(taskDetails);
@@ -136,10 +149,10 @@ const DOMController = (() => {
         }
     }
 
-    return {
-        renderProjectList,
-        renderTaskList,
-    }
+
+    return { 
+        init,
+    };
 })();
 
 export default DOMController;
