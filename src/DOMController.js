@@ -96,7 +96,6 @@ const DOMController = (() => {
                 appController.removeTaskFromProject(task);
                 taskUI.renderTaskList();
                 attachTaskEventListeners();
-                attachCreateTaskButtonListener();
             } else {
                 toggleTaskDetails(task, taskItem);
             }
