@@ -1,7 +1,9 @@
-import appController from "./app";
+import appController from "./app.js";
 import modalUI from "./modalUI";
 import projectUI from "./projectUI";
 import taskUI from "./taskUI";
+import createTask from "./task";
+import createProject from "./project";
 
 /**
  * The DOMController module manages the user interface and event listeners for 
@@ -79,20 +81,34 @@ const DOMController = (() => {
         taskList.addEventListener("click", (e) => {
             console.log("clicked element: ", e.target);
             const taskItem = e.target.closest(".task-item");
-            
+            console.log("taskitem: ",taskItem);
             if (e.target.id === "create-task-btn") {
                 e.stopPropagation();
                 modalUI.showTaskModal();
                 return;
             }
+            appController.logAllTasks();
+            const taskId = Number(taskItem.dataset.taskId);
+            const task = appController.getActiveProject().getTask(taskId);
 
+            if (!task) {
+                console.log("active prj:", appController.getActiveProject().getTitle());
+                console.log("taskid dom: ", taskId);
+                // console.log("taskID app: ", task.getId())
+                console.log("task: ", task);
+                console.log("taskItem: ", taskItem);
+                console.log("no task in domCOntroler");
+                return;
+            }
+
+            
+            
             if (!taskItem) return;
 
-            const taskTitle = taskItem.querySelector("span").textContent;
-            const task = appController.getActiveProject().getTasks().find(task => task.getTitle() === taskTitle);
 
             if (e.target.classList.contains("delete-task-btn")) {
                 e.stopPropagation();
+
                 appController.removeTaskFromProject(task);
                 taskUI.renderTaskList();
                 attachTaskEventListeners();
@@ -117,32 +133,51 @@ const DOMController = (() => {
             taskItem.classList.remove("expanded");
             const taskDetails = taskItem.querySelector(".task-details");
 
-            if (taskDetails) taskDetails.remove();
+            if (taskDetails) taskDetails.classList.add("hidden");
 
             const editButton = taskItem.querySelector("button");
-            if (editButton) editButton.remove();
+            if (editButton) editButton.classList.add("hidden");
+
+            const deleteButton = taskItem.querySelector(".delete-task-btn");
+            if (deleteButton) deleteButton.classList.remove("hidden");
 
             appController.getActiveProject().setActiveTask(null);
         } else {
             taskItem.classList.add("expanded");
 
-            const taskDetails = document.createElement("div");
-            taskDetails.classList.add("task-details");
-            taskDetails.innerHTML = `
-                <p>Description: ${task.getDescription() || "No description"}</p>
-                <p>Due Date: ${task.getDueDate() || "No Due Date"}</p>
-                <p>Notes: ${task.getNotes() || "No notes"}</p>
-                <p>Priority: ${task.getPriority()}</p>`
+            const taskDetails = taskItem.querySelector(".task-details");
 
-            const editButton = document.createElement("button");
-            editButton.textContent = "Edit";
-            editButton.addEventListener("click", (e) => {
-                e.stopPropagation();
-                modalUI.showTaskModal(task);
-            });
+            if (taskDetails) {
+                taskDetails.classList.remove("hidden");
 
-            taskItem.appendChild(taskDetails);
-            taskItem.appendChild(editButton);
+            } else {
+                const newTaskDetails = document.createElement("div");
+                newTaskDetails.classList.add("task-details");
+                newTaskDetails.innerHTML = `
+                    <p>Description: ${task.getDescription() || "No description"}</p>
+                    <p>Due Date: ${task.getDueDate() || "No Due Date"}</p>
+                    <p>Notes: ${task.getNotes() || "No notes"}</p>
+                    <p>Priority: ${task.getPriority()}</p>`
+                
+                    taskItem.appendChild(newTaskDetails);
+            }
+
+            const deleteButton = taskItem.querySelector(".delete-task-btn");
+            if (deleteButton) deleteButton.classList.remove("hidden");
+
+            const editButton = document.querySelector(".edit-button");
+
+            if(!editButton) {
+                const newEditButton = document.createElement("div");
+                newEditButton.textContent = "Edit";
+                newEditButton.classList.add("edit-button");
+                newEditButton.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    modalUI.showTaskModal(task);
+                });
+    
+                taskItem.appendChild(newEditButton);
+            }
 
             appController.getActiveProject().setActiveTask(task);
         }

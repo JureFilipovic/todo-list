@@ -1,18 +1,32 @@
 import createProject from "./project.js";
 import createTask from "./task.js";
+import storageController from "./localStorage.js";
 
 const appController = (function () {
     let _projects = [];
     let _activeProject = null;
 
     function init() {
-        //load projects first
+        const storedProjectData = storageController.loadProjects();
+
+        storedProjectData.forEach(p => {
+            const project = createProject(p._title);
+
+            if (Array.isArray(p._tasks)) {
+                p._tasks.forEach(t => {
+                    const task = createTask(t._title, t._description, t._dueDate, t._notes, t._priority);
+                    project.addTask(task);
+                });
+            }
+            _projects.push(project);
+        });
 
         if (_projects.length === 0) {
             // add default project and set it active
             addProject("Today");
-            _activeProject = _projects[0];
         }
+
+        _activeProject = _projects[0];
     }
 
     function getActiveProject () {
@@ -21,12 +35,12 @@ const appController = (function () {
     }
 
     function addProject(title) {
+        console.log("adding project with title:", title);
         if (_projects.some(p => p.getTitle() === title)) return false;
 
         const newProject = createProject(title);
         _projects.push(newProject);
-
-        // save projects to memory
+        storageController.saveProjects(_projects);
     }
 
     function removeProject(title) {
@@ -40,8 +54,8 @@ const appController = (function () {
             });
 
             _projects = _projects.filter(p => p.getTitle() !== title);
+            storageController.saveProjects(_projects);
         }
-        //save projects to memory
     }
 
     function setActiveProject(title) {
@@ -58,22 +72,22 @@ const appController = (function () {
     }
 
     function addTaskToProject(title, description = null, dueDate = null, notes = null, priority = "medium") {
-        if (checkActiveProject()) {
-            const newTask = createTask(title, description, dueDate, notes, priority);
-            return _activeProject.addTask(newTask);
-        }
+        if (!checkActiveProject()) return false;
 
-        return false;
+        const newTask = createTask(title, description, dueDate, notes, priority);
+        const success = _activeProject.addTask(newTask);
 
+        if (success) storageController.saveProjects(_projects);
+        return success;
     }
 
     function removeTaskFromProject(task) {
-        if (checkActiveProject()) {
-            console.log("removing task id:", task.getId());
-            return _activeProject.deleteTask(task);
-        }
+        if (!checkActiveProject()) return false;
 
-        return false;
+        const success = _activeProject.deleteTask(task);
+
+        if (success) storageController.saveProjects(_projects);
+        return success;
     }
 
     function getProjects() {
@@ -97,6 +111,10 @@ const appController = (function () {
         });
     }
 
+    function logProjects() {
+        console.log(_projects);
+    }
+
     return {
         init,
         getActiveProject,
@@ -108,6 +126,7 @@ const appController = (function () {
         removeTaskFromProject,
         getProjects,
         logAllTasks,
+        logProjects,
     }
 })();
 
