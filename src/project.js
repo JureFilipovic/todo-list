@@ -15,7 +15,6 @@ export default function createProject(title) {
     const getTasks = () => _tasks;
     const getTitle = () => _title;
     const getTask = (taskId) => {
-        console.log("get this task id: ", taskId);
         return _tasks.find(task => task.getId() === taskId) || null;
     };
     const getActiveTask = () => _activeTask;
@@ -49,7 +48,7 @@ export default function createProject(title) {
 
     // Deletes task based on ID, returns true if successful and false if not
     const deleteTask = (task) => {
-        console.log("deleting task id:", task.getId());
+        // console.log("deleting task id:", task.getId());
         const index = _tasks.findIndex(t => t.getId() === task.getId());
         if (index != -1) {
             _tasks.splice(index, 1);

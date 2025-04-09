@@ -1,5 +1,6 @@
-import appController from "./app";
-import modalUI from "./modalUI";
+import appController from "./app.js";
+import createTask from "./task.js";
+import modalUI from "./modalUI.js";
 
 /**
  * `taskUI` module handles the rendering and updating of the task 
@@ -60,6 +61,9 @@ const taskUI = (() => {
         const taskTitle = document.createElement("span");
         taskTitle.textContent = task.getTitle();
         taskItem.appendChild(taskTitle);
+        taskItem.dataset.taskId = task.getId();
+
+        console.log("task datased:", taskItem.dataset);
 
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete Task";
