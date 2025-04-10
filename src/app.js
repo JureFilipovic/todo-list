@@ -30,12 +30,10 @@ const appController = (function () {
     }
 
     function getActiveProject () {
-        // console.log ("active project: ", _activeProject.getTitle());
         return _activeProject;
     }
 
     function addProject(title) {
-        console.log("adding project with title:", title);
         if (_projects.some(p => p.getTitle() === title)) return false;
 
         const newProject = createProject(title);
@@ -68,7 +66,6 @@ const appController = (function () {
 
     function checkActiveProject() {
         if (!_activeProject) {
-            console.log("No active project");
             return false;
         }
 
@@ -98,27 +95,6 @@ const appController = (function () {
         return _projects;
     }
 
-    function logAllTasks() {
-        _projects.forEach(project => {
-            console.log(`Project: ${project.getTitle()}`);
-            if (project.getTasks().length === 0) console.log("  Empty Project")
-            project.getTasks().forEach(task => {
-                console.log(`   Task ID: ${task.getId()}`);
-                console.log(`   Title: ${task.getTitle()}`);
-                console.log(`   Description: ${task.getDescription()}`);
-                console.log(`   Due Date: ${task.getDueDate()}`);
-                console.log(`   Notes: ${task.getNotes()}`);
-                console.log(`   Priority: ${task.getPriority()}`);
-                console.log(`   Completed: ${task.isCompleted()}`);
-                console.log('-------------------------------');
-            });
-        });
-    }
-
-    function logProjects() {
-        console.log(_projects);
-    }
-
     return {
         init,
         getActiveProject,
@@ -130,8 +106,6 @@ const appController = (function () {
         addTaskToProject,
         removeTaskFromProject,
         getProjects,
-        logAllTasks,
-        logProjects,
     }
 })();
 

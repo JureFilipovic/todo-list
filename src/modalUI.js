@@ -54,7 +54,6 @@ const modalUI = (() => {
         });
 
         backdrop.addEventListener("click", () => {
-            console.log("closing modal")
             closeModal(modal, backdrop);
         });
 

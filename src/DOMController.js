@@ -38,11 +38,9 @@ const DOMController = (() => {
         projectList.addEventListener("click", (e) => {
             const projectItem = e.target.closest(".project-item");
             if (!projectItem) {
-                console.log("no project item")
                 return;
             }
             const projectTitle = projectItem.dataset.projectTitle;
-            console.log(`active project: ${projectTitle}`)
 
             if (e.target.classList.contains("delete-project-btn")) {
                 e.stopPropagation();
@@ -57,7 +55,7 @@ const DOMController = (() => {
                         appController.clearActiveProject();
                     }
                 }
-                
+
                 projectUI.renderProjectList();
                 taskUI.renderTaskList();
                 attachProjectEventListeners();
@@ -87,13 +85,11 @@ const DOMController = (() => {
      * selecting, and deleting tasks.
      */
     function attachTaskEventListeners() {
-        console.log("Attaching task event listeners..")
         const taskList = document.getElementById("task-list");
 
         taskList.addEventListener("click", (e) => {
-            console.log("clicked element: ", e.target);
             const taskItem = e.target.closest(".task-item");
-            console.log("taskitem: ",taskItem);
+
             if (e.target.id === "create-task-btn") {
                 e.stopPropagation();
                 modalUI.showTaskModal();
@@ -103,17 +99,7 @@ const DOMController = (() => {
             const taskId = Number(taskItem.dataset.taskId);
             const task = appController.getActiveProject().getTask(taskId);
 
-            if (!task) {
-                console.log("active prj:", appController.getActiveProject().getTitle());
-                console.log("taskid dom: ", taskId);
-                // console.log("taskID app: ", task.getId())
-                console.log("task: ", task);
-                console.log("taskItem: ", taskItem);
-                console.log("no task in domCOntroler");
-                return;
-            }
-
-            
+            if (!task) return;            
             
             if (!taskItem) return;
 

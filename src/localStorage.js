@@ -79,7 +79,6 @@ const storageController = (() => {
             }
             return [];
         } catch (e) {
-            console.log("Error parsing stored projecst.", e);
             return [];
         }
     }
