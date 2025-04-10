@@ -12,7 +12,7 @@ export default function createProject(title) {
     let _activeTask = null;
 
     // Getter methods
-    const getTasks = () => _tasks;
+    const getTasks = () => [..._tasks];
     const getTitle = () => _title;
     const getTask = (taskId) => {
         return _tasks.find(task => task.getId() === taskId) || null;
