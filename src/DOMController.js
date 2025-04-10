@@ -47,7 +47,19 @@ const DOMController = (() => {
             if (e.target.classList.contains("delete-project-btn")) {
                 e.stopPropagation();
                 appController.removeProject(projectTitle);
+
+                if (appController.getActiveProject().getTitle() === projectTitle) {
+                    const projects = appController.getProjects();
+
+                    if (projects.length > 0) {
+                        appController.setActiveProject(projects[0].getTitle());
+                    } else {
+                        appController.clearActiveProject();
+                    }
+                }
+                
                 projectUI.renderProjectList();
+                taskUI.renderTaskList();
                 attachProjectEventListeners();
             } else {
                 appController.setActiveProject(projectTitle);
@@ -128,27 +140,26 @@ const DOMController = (() => {
      */
     function toggleTaskDetails(task, taskItem) {
         const activeTask = appController.getActiveProject().getActiveTask();
+        const taskDetails = taskItem.querySelector(".task-details");
+        const editButton = taskItem.querySelector(".edit-button");
+        const deleteButton = taskItem.querySelector(".delete-task-btn");
 
         if (activeTask === task) {
             taskItem.classList.remove("expanded");
-            const taskDetails = taskItem.querySelector(".task-details");
 
             if (taskDetails) taskDetails.classList.add("hidden");
 
-            const editButton = taskItem.querySelector("button");
             if (editButton) editButton.classList.add("hidden");
 
-            const deleteButton = taskItem.querySelector(".delete-task-btn");
             if (deleteButton) deleteButton.classList.remove("hidden");
 
             appController.getActiveProject().setActiveTask(null);
         } else {
             taskItem.classList.add("expanded");
 
-            const taskDetails = taskItem.querySelector(".task-details");
-
             if (taskDetails) {
                 taskDetails.classList.remove("hidden");
+                editButton.classList.remove("hidden");
 
             } else {
                 const newTaskDetails = document.createElement("div");
@@ -162,13 +173,10 @@ const DOMController = (() => {
                     taskItem.appendChild(newTaskDetails);
             }
 
-            const deleteButton = taskItem.querySelector(".delete-task-btn");
             if (deleteButton) deleteButton.classList.remove("hidden");
 
-            const editButton = document.querySelector(".edit-button");
-
             if(!editButton) {
-                const newEditButton = document.createElement("div");
+                const newEditButton = document.createElement("button");
                 newEditButton.textContent = "Edit";
                 newEditButton.classList.add("edit-button");
                 newEditButton.addEventListener("click", (e) => {
@@ -182,7 +190,6 @@ const DOMController = (() => {
             appController.getActiveProject().setActiveTask(task);
         }
     }
-
 
     return { 
         init,
