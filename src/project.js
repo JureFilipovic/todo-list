@@ -52,10 +52,9 @@ export default function createProject(title) {
         const index = _tasks.findIndex(t => t.getId() === task.getId());
         if (index != -1) {
             _tasks.splice(index, 1);
-            console.log("removed task")
             return true; // Successfully deleted
         }
-        console.log("didn't remove")
+        
         return false; // Task not found
     }
 

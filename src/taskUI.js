@@ -37,7 +37,6 @@ const taskUI = (() => {
         if (!activeProject) return;
 
         activeProject.getTasks().forEach((task) => {
-            console.log(task);
             renderTaskItem(task);
         });
 
@@ -62,8 +61,6 @@ const taskUI = (() => {
         taskTitle.textContent = task.getTitle();
         taskItem.appendChild(taskTitle);
         taskItem.dataset.taskId = task.getId();
-
-        console.log("task datased:", taskItem.dataset);
 
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete Task";
