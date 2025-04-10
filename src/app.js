@@ -30,7 +30,7 @@ const appController = (function () {
     }
 
     function getActiveProject () {
-        console.log ("active project: ", _activeProject.getTitle());
+        // console.log ("active project: ", _activeProject.getTitle());
         return _activeProject;
     }
 
@@ -47,7 +47,7 @@ const appController = (function () {
         const projectToRemove = _projects.find(p => p.getTitle() === title);
 
         if (projectToRemove) {
-            const tasksToDelete = projectToRemove.getTasks();
+            const tasksToDelete = [...projectToRemove.getTasks()];
 
             tasksToDelete.forEach(task => {
                 projectToRemove.deleteTask(task);
@@ -60,6 +60,10 @@ const appController = (function () {
 
     function setActiveProject(title) {
         _activeProject = _projects.find(p => p.getTitle() === title);
+    }
+
+    function clearActiveProject() {
+        _activeProject = null;
     }
 
     function checkActiveProject() {
@@ -121,6 +125,7 @@ const appController = (function () {
         addProject,
         removeProject,
         setActiveProject,
+        clearActiveProject,
         checkActiveProject,
         addTaskToProject,
         removeTaskFromProject,
