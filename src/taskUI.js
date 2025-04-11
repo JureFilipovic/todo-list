@@ -18,9 +18,13 @@ const taskUI = (() => {
     const mainArea = document.createElement("div");
     mainArea.id = "main-area";
 
+    const projectHeader = document.createElement("div");
+    projectHeader.id = "project-header";
+
     const taskList = document.createElement("ul");
     taskList.id = "task-list";
 
+    mainArea.appendChild(projectHeader);
     mainArea.appendChild(taskList);
     content.appendChild(mainArea);
 
@@ -33,8 +37,19 @@ const taskUI = (() => {
     function renderTaskList() {
         const activeProject = appController.getActiveProject();
         taskList.innerHTML = "";
+        projectHeader.innerHTML = "";
 
         if (!activeProject) return;
+
+        const projectTitle = document.createElement("h2");
+        projectTitle.textContent = activeProject.getTitle();
+
+        const deleteProjectButton = document.createElement("button");
+        deleteProjectButton.textContent = "Delete Project";
+        deleteProjectButton.id = "delete-project-btn";
+
+        projectHeader.appendChild(projectTitle);
+        projectHeader.appendChild(deleteProjectButton);
 
         activeProject.getTasks().forEach((task) => {
             renderTaskItem(task);
