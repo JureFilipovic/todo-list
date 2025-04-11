@@ -41,7 +41,6 @@ const projectUI = (() => {
         projects.forEach((project) => {
             const projectItem = document.createElement("li");
             projectItem.classList.add("project-item");
-            projectItem.textContent = `${project.getTitle()}`;
 
             if (appController.getActiveProject() === project) {
                 projectItem.classList.add("active");
@@ -49,11 +48,11 @@ const projectUI = (() => {
 
             projectItem.dataset.projectTitle = project.getTitle();
 
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.classList.add("delete-project-btn");
+            const titleSpan = document.createElement("span");
+            titleSpan.classList.add("project-title");
+            titleSpan.textContent = project.getTitle();
 
-            projectItem.appendChild(deleteButton);
+            projectItem.appendChild(titleSpan);
             projectList.appendChild(projectItem);
         });
     }
