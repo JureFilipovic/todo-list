@@ -21,6 +21,7 @@ const modalUI = (() => {
     function closeModal(modal, backdrop) {
         modal.style.display = "none";
         backdrop.style.display = "none";
+        backdrop.remove();
     }
 
     /**
