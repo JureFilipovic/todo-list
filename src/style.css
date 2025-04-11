@@ -153,14 +153,17 @@ header {
 }
 
 .task-item {
+    display: flex;
+    flex-direction: column;
     padding: 15px;
     margin: 10px 0;
     border-radius: 5px;
     background-color: #f8f8f8;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     transition: background-color 0.3s ease;
+}
+
+.task-item.expanded {
+    margin-bottom: 20px;
 }
 
 .task-item.low {
@@ -196,6 +199,68 @@ header {
     color: white;
     font-size: 1.2rem;
     padding: 10px 20px;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.task-title {
+    font-weight: bold;
+    flex-grow: 1;
+    font-size: 1.2rem;
+}
+
+.task-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 80%;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+}
+
+.task-details.hidden {
+    display: none;
+}
+
+.detail-label {
+    width: 100px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.detail-content {
+    flex: 1;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding-left: 10px;
+}
+
+.edit-button {
+    background-color: #4caf50;
+    color: white;
+    border-radius: 5px;
+    padding: 8px 15px;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+    margin-top: 10px;
+}
+
+.edit-button:hover {
+    background-color: #45a049;
+}
+
+.edit-button.hidden {
+    display: none;
 }
 
 /* Modal Styles */
@@ -270,21 +335,21 @@ button[type="submit"]:hover {
     background-color: #45a049;
 }
 
-/* Task Details Styling */
-.task-details {
-    margin-top: 10px;
-    font-size: 0.9rem;
-}
-
-.task-details.hidden {
-    display: none;
-}
-
-.edit-button.hidden {
-    display: none;
-}
 
 /* Adjustments for mobile responsiveness */
+#hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 20;
+}
+
 @media (max-width: 768px) {
     #side-bar {
         width: 200px;
@@ -296,16 +361,28 @@ button[type="submit"]:hover {
 }
 
 @media (max-width: 500px) {
-    #content {
-        display: flex;
-        flex-direction: column;
+    #hamburger-btn {
+        display: block;
     }
+
     #side-bar {
+        display: none;
         width: 100%;
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
         position: relative;
+        z-index: 15;
+    }
+
+    #side-bar.active {
+        display: block;
     }
 
     #main-area {
         margin-left: 0;
+    }
+
+    body.sidebar-open #main-area {
+        display: none;
     }
 }

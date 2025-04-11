@@ -72,16 +72,22 @@ const taskUI = (() => {
         const taskItem = document.createElement("li");
         taskItem.classList.add("task-item", task.getPriority());
 
+        const headerDiv = document.createElement("div");
+        headerDiv.classList.add("task-header");
+
         const taskTitle = document.createElement("span");
         taskTitle.textContent = task.getTitle();
-        taskItem.appendChild(taskTitle);
-        taskItem.dataset.taskId = task.getId();
-
+        taskTitle.classList.add("task-title");
+        
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete Task";
         deleteButton.classList.add("delete-task-btn");
-        taskItem.appendChild(deleteButton);
 
+        headerDiv.appendChild(taskTitle);
+        headerDiv.appendChild(deleteButton);
+        
+        taskItem.appendChild(headerDiv);
+        taskItem.dataset.taskId = task.getId();
         taskList.appendChild(taskItem);
     }
 
