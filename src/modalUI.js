@@ -45,8 +45,6 @@ const modalUI = (() => {
         backdrop.classList.add("backdrop");
         document.body.appendChild(backdrop);
 
-        console.log (backdrop);
-
         backdrop.appendChild(modal);
         modal.style.display = "flex";
         

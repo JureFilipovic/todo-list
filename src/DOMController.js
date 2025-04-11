@@ -27,6 +27,7 @@ const DOMController = (() => {
         attachCreateProjectButtonListener();
         attachTaskEventListeners();
         attachDeleteProjectButtonListener();
+        attachHamburgerBtnEventListener();
     }
 
     /**
@@ -43,6 +44,12 @@ const DOMController = (() => {
             }
             const projectTitle = projectItem.dataset.projectTitle;
 
+            if (window.innerWidth <= 500) {
+                const sidebar = document.getElementById("side-bar");
+                sidebar.classList.remove("active");
+                document.body.classList.remove("sidebar-open");
+            }
+
             appController.setActiveProject(projectTitle);
             projectUI.renderProjectList();
             taskUI.renderTaskList();
@@ -57,7 +64,7 @@ const DOMController = (() => {
         const projectHeader = document.getElementById("project-header");
 
         projectHeader.addEventListener("click", (e) => {
-            if (e.target.id = "delete-project-btn") {
+            if (e.target.id === "delete-project-btn") {
                 const project = appController.getActiveProject();
                 appController.removeProject(project.getTitle());
 
@@ -159,12 +166,24 @@ const DOMController = (() => {
                 const newTaskDetails = document.createElement("div");
                 newTaskDetails.classList.add("task-details");
                 newTaskDetails.innerHTML = `
-                    <p>Description: ${task.getDescription() || "No description"}</p>
-                    <p>Due Date: ${task.getDueDate() || "No Due Date"}</p>
-                    <p>Notes: ${task.getNotes() || "No notes"}</p>
-                    <p>Priority: ${task.getPriority()}</p>`
-                
-                    taskItem.appendChild(newTaskDetails);
+                    <div class="detail-row">
+                        <span class="detail-label">Description:</span>
+                        <div class="detail-content">${task.getDescription() || "No description"}</div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Due Date:</span>
+                        <div class="detail-content">${task.getDueDate() || "No Due Date"}</div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Notes:</span>
+                        <div class="detail-content">${task.getNotes() || "No notes"}</div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Priority:</span>
+                        <div class="detail-content">${task.getPriority().charAt(0).toUpperCase() + task.getPriority().slice(1)}</div>
+                    </div>
+                    `;
+                taskItem.appendChild(newTaskDetails);
             }
 
             if (deleteButton) deleteButton.classList.remove("hidden");
@@ -183,6 +202,20 @@ const DOMController = (() => {
 
             appController.getActiveProject().setActiveTask(task);
         }
+    }
+
+    /**
+     * Attaches event listener for 'Hamburger Button' to toggle between
+     * sidebar and main area if screen width is smaller than 500px
+     */
+    function attachHamburgerBtnEventListener() {
+        const hamburgerBtn = document.getElementById("hamburger-btn");
+        const sidebar = document.getElementById("side-bar");
+
+        hamburgerBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+            document.body.classList.toggle("sidebar-open");
+        });
     }
 
     return { 

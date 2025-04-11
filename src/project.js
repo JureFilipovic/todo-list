@@ -1,4 +1,6 @@
 import createTask from "./task.js";
+import localStorage from "./localStorage.js";
+import appController from "./app.js";
 
 /**
  * Creates a new project with a given title, where tasks can be added and updated.
@@ -43,6 +45,8 @@ export default function createProject(title) {
         task.setDueDate(dueDate);
         task.setNotes(notes);
         task.setPriority(priority);
+
+        localStorage.saveProjects(appController.getProjects());
         return true;
     }
 
