@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "A simple and interactive To-Do List application designed to help users organize and manage tasks efficiently.",
   "author": "Jure Filipovic",
+  "homepage": "https://jurefilipovic.github.io/todo-list/",
   "scripts": {
     "start": "webpack serve --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",
+    "gh-pages": "^6.3.0",
     "html-webpack-plugin": "^5.6.3",
     "style-loader": "^4.0.0",
     "webpack": "^5.98.0",
