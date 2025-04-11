@@ -26,6 +26,7 @@ const DOMController = (() => {
         attachProjectEventListeners();
         attachCreateProjectButtonListener();
         attachTaskEventListeners();
+        attachDeleteProjectButtonListener();
     }
 
     /**
@@ -42,30 +43,37 @@ const DOMController = (() => {
             }
             const projectTitle = projectItem.dataset.projectTitle;
 
-            if (e.target.classList.contains("delete-project-btn")) {
-                e.stopPropagation();
-                appController.removeProject(projectTitle);
+            appController.setActiveProject(projectTitle);
+            projectUI.renderProjectList();
+            taskUI.renderTaskList();
+            
+        });
+    }
 
-                if (appController.getActiveProject().getTitle() === projectTitle) {
-                    const projects = appController.getProjects();
+    /**
+     * Attaches an event listener to the 'Delete Project' button to delete project
+     */
+    function attachDeleteProjectButtonListener() {
+        const projectHeader = document.getElementById("project-header");
 
-                    if (projects.length > 0) {
-                        appController.setActiveProject(projects[0].getTitle());
-                    } else {
-                        appController.clearActiveProject();
-                    }
+        projectHeader.addEventListener("click", (e) => {
+            if (e.target.id = "delete-project-btn") {
+                const project = appController.getActiveProject();
+                appController.removeProject(project.getTitle());
+
+                const projects = appController.getProjects();
+
+                if (projects.length > 0) {
+                    appController.setActiveProject(projects[0].getTitle());
+                } else {
+                    appController.clearActiveProject();
                 }
 
                 projectUI.renderProjectList();
                 taskUI.renderTaskList();
-                attachProjectEventListeners();
-            } else {
-                appController.setActiveProject(projectTitle);
-                taskUI.renderTaskList();
             }
         });
     }
-
 
     /**
      * Attaches an event listener to the 'Create Project' button to show the project 
@@ -76,7 +84,7 @@ const DOMController = (() => {
         createProjectButton.addEventListener("click", () => {
             modalUI.showProjectModal();
             projectUI.renderProjectList();
-            attachProjectEventListeners();
+            // attachProjectEventListeners();
         });
     }
 
@@ -95,7 +103,7 @@ const DOMController = (() => {
                 modalUI.showTaskModal();
                 return;
             }
-            appController.logAllTasks();
+            
             const taskId = Number(taskItem.dataset.taskId);
             const task = appController.getActiveProject().getTask(taskId);
 
@@ -109,7 +117,7 @@ const DOMController = (() => {
 
                 appController.removeTaskFromProject(task);
                 taskUI.renderTaskList();
-                attachTaskEventListeners();
+                // attachTaskEventListeners();
             } else {
                 toggleTaskDetails(task, taskItem);
             }
